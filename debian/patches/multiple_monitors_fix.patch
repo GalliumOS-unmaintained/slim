@@ -234,3 +234,67 @@
  
  	return result;
  }
+--- a/panel.h
++++ b/panel.h
+@@ -103,7 +103,7 @@
+ 							int x, int y, const std::string &str,
+ 							XftColor *shadowColor,
+ 							int xOffset, int yOffset);
+-
++	void UpdateRootWindowSize();
+ 	Rectangle GetPrimaryViewport();
+ 	void ApplyBackground(Rectangle = Rectangle());
+ 
+@@ -143,6 +143,9 @@
+ 	std::string PasswdBuffer;
+ 	std::string HiddenPasswdBuffer;
+ 
++	/*Xrandr stuff */
++	int randr_event;
++
+ 	/* screen stuff */
+ 	Rectangle viewport;
+ 
+--- a/slimlock.cpp
++++ b/slimlock.cpp
+@@ -45,7 +45,6 @@
+ 						struct pam_response **resp, void *appdata_ptr);
+ string findValidRandomTheme(const string& set);
+ void HandleSignal(int sig);
+-void *RaiseWindow(void *data);
+ 
+ // I really didn't wanna put these globals here, but it's the only way...
+ Display* dpy;
+@@ -216,9 +215,6 @@
+ 	// Let's just make sure it has a sane value
+ 	cfg_passwd_timeout = cfg_passwd_timeout > 60 ? 60 : cfg_passwd_timeout;
+ 
+-	pthread_t raise_thread;
+-	pthread_create(&raise_thread, NULL, RaiseWindow, NULL);
+-
+ 	// Main loop
+ 	while (true)
+ 	{
+@@ -231,9 +227,6 @@
+ 		loginPanel->WrongPassword(cfg_passwd_timeout);
+ 	}
+ 
+-	// kill thread before destroying the window that it's supposed to be raising
+-	pthread_cancel(raise_thread);
+-
+ 	loginPanel->ClosePanel();
+ 	delete loginPanel;
+ 
+@@ -359,12 +352,3 @@
+ 
+ 	die(APPNAME": Caught signal; dying\n");
+ }
+-
+-void* RaiseWindow(void *data) {
+-	while(1) {
+-		XRaiseWindow(dpy, win);
+-		sleep(1);
+-	}
+-
+-	return (void *)0;
+-}
