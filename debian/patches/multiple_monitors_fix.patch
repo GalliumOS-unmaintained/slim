@@ -1,0 +1,236 @@
+--- a/panel.cpp
++++ b/panel.cpp
+@@ -26,7 +26,7 @@
+ 	mode = panel_mode;
+ 
+ 	session_name = "";
+-    session_exec = "";
++	session_exec = "";
+ 	if (mode == Mode_Lock) {
+ 		Win = root;
+ 		viewport = GetPrimaryViewport();
+@@ -436,10 +436,19 @@
+ 	}
+ }
+ 
++void Panel::UpdateRootWindowSize() {
++  if (mode != Mode_Lock) {
++    return;
++  }
++
++  XResizeWindow(Dpy, Root, DisplayWidth(Dpy, Scr), DisplayHeight(Dpy, Scr));
++}
++
+ void Panel::EventHandler(const Panel::FieldType& curfield) {
+ 	XEvent event;
+ 	field = curfield;
+ 	bool loop = true;
++	int error;
+ 
+ 	if (mode == Mode_DM)
+ 		OnExpose();
+@@ -451,16 +460,26 @@
+ 	while (loop) {
+ 		if (XPending(Dpy) || poll(&x11_pfd, 1, -1) > 0) {
+ 			while(XPending(Dpy)) {
+-				XNextEvent(Dpy, &event);
+-				switch(event.type) {
+-					case Expose:
+-						OnExpose();
+-						break;
+-
+-					case KeyPress:
+-						loop=OnKeyPress(event);
+-						break;
+-				}
++			  XNextEvent(Dpy, &event);
++			  switch(event.type) {
++			  case Expose:
++			    OnExpose();
++			    break;
++
++			  case KeyPress:
++			    loop=OnKeyPress(event);
++			    break;
++			  }
++#ifdef RRScreenChangeNotifyMask
++			  if (event.type == randr_event + RRScreenChangeNotify) {
++			    /* Inform Xlib that it's ok to update its data structures. */
++			    UpdateRootWindowSize();
++			    XRRUpdateConfiguration(&event);
++			    /* Xrandr.h 1.9, 2002/09/29*/
++			  }
++#endif /* RRScreenChangeNotifyMask */
++			  if (mode == Mode_Lock)
++			    XRaiseWindow(Dpy, Root);
+ 			}
+ 		}
+ 	}
+@@ -856,64 +875,122 @@
+ }
+ 
+ Rectangle Panel::GetPrimaryViewport() {
++  //Mostly copied from XScreenSaver
+ 	Rectangle fallback;
+ 	Rectangle result;
+-
+-	RROutput primary;
+-	XRROutputInfo *primary_info;
+-	XRRScreenResources *resources;
+-	XRRCrtcInfo *crtc_info;
+-
+-    int crtc;
++	int error, major, minor, nscreens, i;
++	Bool new_randr_p = False;
+ 
+ 	fallback.x = 0;
+ 	fallback.y = 0;
+ 	fallback.width = DisplayWidth(Dpy, Scr);
+ 	fallback.height = DisplayHeight(Dpy, Scr);
++        result.x = result.y = result.width = result.height = 0;
+ 
+-	primary = XRRGetOutputPrimary(Dpy, Win);
+-	if (!primary) {
+-	    return fallback;
+-	}
+-	resources = XRRGetScreenResources(Dpy, Win);
+-	if (!resources)
+-	    return fallback;
++	if (!XRRQueryExtension (Dpy, &randr_event, &error))
++	  return fallback;
+ 
+-	primary_info = XRRGetOutputInfo(Dpy, resources, primary);
+-	if (!primary_info) {
+-	    XRRFreeScreenResources(resources);
+-	    return fallback;
+-	}
++	if (!XRRQueryVersion (Dpy, &major, &minor))
++	  return fallback;
+ 
+-    // Fixes bug with multiple monitors.  Just pick first monitor if 
+-    // XRRGetOutputInfo gives returns bad into for crtc.
+-    if (primary_info->crtc < 1) {
+-        if (primary_info->ncrtc > 0) {
+-           crtc = primary_info->crtcs[0];
+-        } else {
+-            cerr << "Cannot get crtc from xrandr.\n";
+-            exit(EXIT_FAILURE);
+-        }
+-    } else {
+-        crtc = primary_info->crtc;
+-    }
+-
+-	crtc_info = XRRGetCrtcInfo(Dpy, resources, crtc);
+-
+-	if (!crtc_info) {
+-	    XRRFreeOutputInfo(primary_info);
+-	    XRRFreeScreenResources(resources);
++	if (major <= 0)    /* Protocol was still in flux back then -- fuck it. */
++	  return fallback;
++
++# ifdef HAVE_RANDR_12
++	new_randr_p = (major > 1 || (major == 1 && minor >= 2));
++# endif
++
++	if (! new_randr_p)
++	  /* RANDR 1.0 -- no Xinerama-like virtual screens. */
++	  nscreens = ScreenCount (Dpy);
++	else  /* RANDR 1.2 or newer -- built-in Xinerama */  {
++# ifdef HAVE_RANDR_12
++	  int xsc = ScreenCount (Dpy);
++	  nscreens = 0;
++	  /* Add up the virtual screens on each X screen. */
++	  for (i = 0; i < xsc; i++) {
++	    XRRScreenResources *res =
++	      XRRGetScreenResources (Dpy, Root (Dpy, i));
++	    nscreens += res->noutput;
++	    XRRFreeScreenResources (res);
++	  }
++# endif /* HAVE_RANDR_12 */
++	}
++
++	if (nscreens <= 0) {
++	  return fallback;
++	}
++
++	for (i = 0; i < ScreenCount(Dpy); i++) {
++#  ifdef RRScreenChangeNotifyMask                 /* randr.h 1.5, 2002/09/29 */
++	  XRRSelectInput (Dpy, RootWindow(Dpy, i),
++			  RRScreenChangeNotifyMask);
++#  else  /* !RRScreenChangeNotifyMask */          /* Xrandr.h 1.4, 2001/06/07 */
++	  XRRScreenChangeSelectInput (Dpy, RootWindow (si->dpy, i), True);
++#  endif /* !RRScreenChangeNotifyMask */
++	}
++
++	Screen *screen = ScreenOfDisplay (Dpy, 0);
++	if (! new_randr_p)  /* RANDR 1.0 */ {
++	  XRRScreenConfiguration *rrc;
++	  rrc = XRRGetScreenInfo (Dpy, RootWindowOfScreen (screen));
++	  if (rrc) {
++	    SizeID size = -1;
++	    Rotation rot = ~0;
++	    XRRScreenSize *rrsizes;
++	    int nsizes = 0;
++
++	    size = XRRConfigCurrentConfiguration (rrc, &rot);
++	    rrsizes = XRRConfigSizes (rrc, &nsizes);
++	    if (nsizes <= 0)  /* WTF?  Shouldn't happen but does. */ {
++	      result.width  = DisplayWidth (Dpy, i);
++	      result.height = DisplayHeight (Dpy, i);
++	    }
++	    else if (rot & (RR_Rotate_90|RR_Rotate_270)) {
++	      result.width  = rrsizes[size].height;
++	      result.height = rrsizes[size].width;
++	    } else  {
++	      result.width  = rrsizes[size].width;
++	      result.height = rrsizes[size].height;
++	    }
++
++	    /* don't free 'rrsizes' */
++	    XRRFreeScreenConfigInfo (rrc);
++	  }
++	} else   /* RANDR 1.2 or newer */ {
++# ifdef HAVE_RANDR_12
++	  int k;
++	  XRRScreenResources *res =
++	    XRRGetScreenResources (Dpy, RootWindowOfScreen (screen));
++	  XRROutputInfo *rroi = XRRGetOutputInfo (Dpy, res,
++						  res->outputs[0]);
++	  RRCrtc crtc = (rroi->crtc  ? rroi->crtc :
++			 rroi->ncrtc ? rroi->crtcs[0] : 0);
++	  XRRCrtcInfo *crtci = (crtc ? XRRGetCrtcInfo(Dpy, res, crtc) : 0);
++	  if (crtci) {
++	    /* Note: if the screen is rotated, XRRConfigSizes contains
++	       the unrotated WxH, but XRRCrtcInfo contains rotated HxW.
++	    */
++	    result.x      = crtci->x;
++	    result.y      = crtci->y;
++	    result.width  = crtci->width;
++	    result.height = crtci->height;
++	  }
++
++	  if (rroi->connection == RR_Disconnected)
+ 	    return fallback;
++	  /* #### do the same for RR_UnknownConnection? */
++
++	  if (crtci)
++	    XRRFreeCrtcInfo (crtci);
++
++	  XRRFreeOutputInfo (rroi);
++	  XRRFreeScreenResources (res);
++# endif /* HAVE_RANDR_12 */
+ 	}
+ 
+-	result.x = crtc_info->x;
+-	result.y = crtc_info->y;
+-	result.width = crtc_info->width;
+-	result.height = crtc_info->height;
+-
+-	XRRFreeCrtcInfo(crtc_info);
+-	XRRFreeOutputInfo(primary_info);
+-	XRRFreeScreenResources(resources);
++	if (result.width == 0 || result.height == 0)
++          return fallback;
+ 
+ 	return result;
+ }

@@ -1,0 +1,360 @@
+slim (1.3.6-7) unstable; urgency=high
+
+  * Patch for multiple monitor fixes
+  * Patch for setting the priority of the X server
+
+ -- Hugh Greenberg <hugh@galliumos.org>  Thu, 01 Oct 2015 16:57:11 +0200
+
+slim (1.3.6-6) unstable; urgency=high
+
+  * Updated config for galliumos
+
+ -- Hugh Greenberg <hugh@galliumos.org>  Wed, 22 Sep 2015 16:57:11 +0200
+
+
+slim (1.3.6-5) unstable; urgency=high
+
+  * Updated config for galliumos
+  * Updated background
+
+ -- Hugh Greenberg <hugh@galliumos.org>  Wed, 22 Sep 2015 16:57:11 +0200
+
+slim (1.3.6-4) unstable; urgency=medium
+
+  * Build slim without deprecated consolekit support (Closes: #751618):
+    - Drop consolekit from Depends and libck-connector-dev
+      from Build-Depends in debian/control.
+    - Disable consolekit in CMAKE_FLAGS in debian/rules.
+    Thanks to Elimar Riesebieter <riesebie@lxtec.de>!
+  * Bump Standards-Version to 3.9.6, no changes required.
+  * Update homepage in debian/control and debian/copyright.
+  * Update debian/watch to point to new homepage.
+  * Update and clean up debian/copyright.
+  * Add new Lines theme for Debian Jessie:
+    - Refresh debian/patches/slim-conf.patch
+    - Update debian/slim.install, debian/rules and
+      debian/source/include-binaries for new files.
+    - Fix key binding for session selection. (Closes: #756519)
+  * Make package lintian-clean:
+    - Add manpage-formatting-fixes.patch to escape a minus
+      sign and remove a trailing space in the slimlock.1.
+    - Update debian/copyright.
+    - Add lintian-overrides for info tags which can be ignored.
+    - Add lintian-override for check-gpg-signature as a GPG
+      signature is not provided by upstream yet.
+  * Rewrite debian/patches/fix-systemd-service.patch, debian/slim.posinst:
+    - Ensure we are starting slim on systemd only when selected as
+      default. Thanks Didier Roche <didrocks@ubuntu.com> for the patch.
+      (Closes: #748668)
+
+ -- Mateusz Łukasik <mati75@linuxmint.pl>  Tue, 13 Jan 2015 20:12:03 +0100
+
+slim (1.3.6-3) unstable; urgency=high
+
+  * debian/patches:
+    - Replace no-slimlock.patch with no-slimlock-with-pam.patch to fix
+      build with pam support on non-linux arches. (Closes: #743864)
+    - Update libslim-cmake-fixes.patch.
+
+ -- Mateusz Łukasik <mati75@linuxmint.pl>  Fri, 25 Apr 2014 16:57:11 +0200
+
+slim (1.3.6-2) unstable; urgency=medium
+
+  * debian/rules:
+    - Fix the if statement for hurd-i386 build architecture test which
+      previously disabled PAM on non-Hurd archs. (Closes: #742904, #742950)
+
+ -- Mateusz Łukasik <mati75@linuxmint.pl>  Tue, 01 Apr 2014 14:11:43 +0200
+
+slim (1.3.6-1) unstable; urgency=medium
+
+  * Add myself to the list of uploaders with permission from Nobuhiro Iwamatsu.
+  * Fix systemd support: (Closes: #741511)
+    - debian/fix-systemd-service.patch: Add missing
+      "WantedBy=graphical.target" slim.service file.
+    - debian/control: Add dh-systemd to build depends.
+    - debian/rules: Add dh_systemd support.
+
+ -- Mateusz Łukasik <mati75@linuxmint.pl>  Fri, 14 Mar 2014 23:20:35 +0100
+
+slim (1.3.6-0.3) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * debian/rules:
+    - Test for hurd-i386 build architecture as "gnu", not
+      "hurd" to really fix FTBFS.
+  * debian/control:
+    - Update long description. (Closes: #659857)
+  * debian/patches:
+    - Add slim-add-sessiondir.patch: to set directory that contains
+      the xsessions. (Closes: #740394)
+    - Update slim-conf.patch.
+    - Add libslim-cmake-fixes.patch: Fix FTBFS on Ubuntu.
+
+ -- Mateusz Łukasik <mati75@linuxmint.pl>  Sun, 02 Mar 2014 18:21:42 +0100
+
+slim (1.3.6-0.2) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Don't build slimlock on non-Linux ports, fixes FTBFS:
+    - Add patch to make cmake target "slimlock" conditional
+      on BUILD_SLIMLOCK: debian/patches/no-slimlock.patch.
+    - Set -DBUILD_SLIMLOCK=yes|no depending on the host
+      operating system in debian/rules.
+
+ -- Mateusz Łukasik <mati75@linuxmint.pl>  Thu, 27 Feb 2014 16:38:54 +0100
+
+slim (1.3.6-0.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * New upstream release:
+    - Added systemd support. (Closes: #692148)
+    - Fixed CVE-2013-4412. (Closes: #725902)
+  * Add debian/watch.
+  * debian/control:
+    - Update build depends for new version.
+    - Bump standards version to 3.9.5.
+  * Add fvwm to slim.conf. (Closes: #689781)
+  * Remove debian/patches/disable_log.patch -- no longer needed.
+  * Update debian/slim.init:
+    - Use lsb init functions in the init script file. (Closes: #698257)
+    - Run dbus before slim. (Closes: #705883)
+  * Refresh debian/patches/slim-fix-env-alloc.patch.
+  * Rewrite debian/copyright.
+
+ -- Mateusz Łukasik <mati75@linuxmint.pl>  Sat, 22 Feb 2014 09:58:00 +0100
+
+slim (1.3.4-2.1) unstable; urgency=high
+
+  * Non-maintainer upload.
+  * Add debian/patches/slim-fix-env-alloc.patch:
+    - fix memory corruption in slim child. (Closes: #733916)
+  * debian/slim.upstart: Add upstart job. (Closes: #704049)
+
+ -- Mateusz Łukasik <mati75@linuxmint.pl>  Fri, 07 Feb 2014 10:23:12 +0100
+
+slim (1.3.4-2) unstable; urgency=low
+
+  * Add new theme (Joy) and switch theme from SpaceFun to Joy.
+    (Closes: #678475)
+
+ -- Nobuhiro Iwamatsu <iwamatsu@debian.org>  Thu, 28 Jun 2012 08:59:51 +0900
+
+slim (1.3.4-1) unstable; urgency=low
+
+  * New upstream release. (Closes: #592681, #648120)
+  * Update debian/control.
+    - Add xauth to Suggests. (Closes: #587320)
+  * debian/slim.pam:
+    - Enable pam_loginuid. (Closes: #677436)
+  * Add patches/disable_log.patch. Disable logging to stderr.
+
+ -- Nobuhiro Iwamatsu <iwamatsu@debian.org>  Wed, 27 Jun 2012 00:37:44 +0900
+
+slim (1.3.3-2) unstable; urgency=low
+
+  * Add freeglut3-dev to Build-Depends.
+
+ -- Nobuhiro Iwamatsu <iwamatsu@debian.org>  Fri, 04 May 2012 05:46:43 +0900
+
+slim (1.3.3-1) unstable; urgency=low
+
+  * New upstream release. (Closes: #614749, #472855, #612023)
+  * Remove unnecessary patches.
+    - debian/patches/fix-black-screen.patch.
+    - debian/patches/fix_ftbfs-as-needed.patch.
+    - debian/patches/Makefile.patch.
+  * Update debian/control.
+    - Update Standards-Version to 3.9.3.
+    - Update Build-Depends. Add cmake, libck-connector-dev and zlib1g-dev.
+    - Add dbus and consolekit to Depends.
+  * Update debian/rules.
+    - Rewrite debian/rules, convert to dh.
+  * Update patch for slim.conf.
+  * Update compat to 9.
+  * Add directory for pam.d from install file.
+  * Remove directory for theme files to debian/slim.dirs.
+  * Add new template for daemon name.
+  * Change source format to 3.0 (quilt).
+    - Remove *.shar files.
+  * Update postinst and add postrm and prerm for slim.
+  * Add pam file for slim. (Closes: #476248, #664806)
+  * Update translations.
+    - Update Polish translation. (Closes: #661248)
+
+ -- Nobuhiro Iwamatsu <iwamatsu@debian.org>  Fri, 06 Apr 2012 10:48:50 +0900
+
+slim (1.3.2-1) unstable; urgency=low
+
+  * New upstream release. (Closes: #633583, #605214)
+  * Update debian/control.
+    - Bump up Standards-Version to 3.9.2.
+    - Change Build-Depends from libjpeg62-dev to libjpeg-dev. (Closes: #644805)
+    - Change Build-Depends from libpng12-dev to libpng-dev.
+  * Refresh patches.
+    - Drop patches/ftbfs_gcc_4.4.patch. Applied upstream.
+    - Drop patches/xauth_secret_support.patch. Applied upstream.
+    - Drop patches/insecure_PATH_assignment.patch. Applied upstream.
+    - Drop patches/fix-manpage.patch. Applied upstream.
+    - Update patches/Makefile.patch and debian/patches/slim-conf.patch.
+    - Add patches/fix_ftbfs_as-needed.patch to fix FTBFS with
+      ld --as-needed. (Closes: #607185)
+  * Update debian/rules.
+    - Fix lintian debian-rules-missing-recommended-target build-{arch,indep}.
+  * Update debian/README.Debian.
+    - Fix lintian spelling-error-in-readme-debian.
+
+ -- Nobuhiro Iwamatsu <iwamatsu@debian.org>  Mon, 06 Feb 2012 00:53:36 +0900
+
+slim (1.3.1-8) unstable; urgency=low
+
+  * New theme.
+    - Add new theme debian-spacefun and set it as default. (Closes: #603256)
+      Thanks to Yves-Alexis Perez.
+    - Update patches/slim-conf.patch.
+    - Add remove function of debian/debian-spacefun to debian/rules.
+    - Add debian-spacefun to debian/slim.install.
+
+ -- Nobuhiro Iwamatsu <iwamatsu@debian.org>  Sun, 14 Nov 2010 07:40:05 +0900
+
+slim (1.3.1-7) unstable; urgency=high
+
+  * Update debian/control.
+    - Bump up Standards-Version to 3.9.1.
+  * Add debian/patches/fix-black-screen.patch to fix
+    black screen on kfreebsd. (Closes: #586593)
+  * Add debian/patches/insecure_PATH_assignment.patch to fix
+    CVE-2010-2945: Insecure PATH assignment (Closes: #594414).
+
+ -- Nobuhiro Iwamatsu <iwamatsu@debian.org>  Thu, 26 Aug 2010 12:40:13 +0900
+
+slim (1.3.1-6) unstable; urgency=low
+
+  * Update debian/control.
+    - Bump up Standards-Version.
+  * Fix default path. (Closes: #581775)
+    Thanks to Andrei Popescu.
+  * Debconf translation:
+    - Update Danish translation. (Closes: #587800)
+      Thanks to Joe Dalton.
+
+ -- Nobuhiro Iwamatsu <iwamatsu@debian.org>  Thu, 08 Jul 2010 05:41:40 +0900
+
+slim (1.3.1-5) unstable; urgency=low
+
+  * Update debian/control.
+    - Bump up Standards-Version.
+  * Update patches/slim-conf.patch:
+    - Set scrot default location to /root. (Closes: #537604)
+
+ -- Nobuhiro Iwamatsu <iwamatsu@debian.org>  Tue, 09 Feb 2010 22:58:12 +0900
+
+slim (1.3.1-4) unstable; urgency=low
+
+  * Update debian/patches/ftbfs_gcc_4.4.patch to fix
+    FTBFS with GCC 4.4. (Closes: #553703)
+  * Update 20slim_locale. (Closes: #536541)
+
+ -- Nobuhiro Iwamatsu <iwamatsu@debian.org>  Mon, 07 Dec 2009 23:15:33 +0900
+
+slim (1.3.1-3) unstable; urgency=low
+
+  * Remove x-terminal-emulator from Recommends and change from
+    x-terminal-emulator to xterm in slim.conf file. (Closes: #536542)
+
+ -- Nobuhiro Iwamatsu <iwamatsu@debian.org>  Sat, 17 Oct 2009 08:03:36 +0900
+
+slim (1.3.1-2) unstable; urgency=low
+
+  * Add Jens Peter Secher to Uploaders list.
+  * Update es.po. (Closes: #510469)
+  * Fix FTBFS with GCC 4.4. (Closes: #505332)
+  * Fix insecure xauth secret. (Closes: #529306)
+  * Fix bug which allowed logging in as root without password. (Closes: #536542)
+    - Add explanation about this problem to README.Debian.
+
+ -- Nobuhiro Iwamatsu <iwamatsu@debian.org>  Mon, 21 Sep 2009 15:52:33 +0900
+
+slim (1.3.1-1) unstable; urgency=low
+
+  * New Maintainer.
+  * New upstream release.
+  * Update Standards-Version.
+  * Update patches:
+    - debian/patches/Makefile.patch.
+    - debian/patches/slim-conf.patch.
+  * Remove patch.
+    - debian/patches/ftbfs-gcc4.3-cfg.cpp.patch.
+
+ -- Nobuhiro Iwamatsu <iwamatsu@debian.org>  Sun, 23 Aug 2009 13:42:54 +0900
+
+slim (1.3.0-2) unstable; urgency=low
+
+  * Minor changes:
+    - Move from dpatch to quilt.
+    - Export every possible locale env-var (updated
+      local/Xsession.d/20slim_locale). (Closes: #441630)
+      Note: Test and validate the patch that uses pam instead. (Closes: #476248)
+    - Modifications to patches/slim-conf.patch:
+      - Replace X11R6/bin with bin/X11. (Closes: #469401)
+      - Add "default" to the start of the list of sessions. (Closes: #476245)
+      - Set default X server option -nolisten tcp. (Closes: #478671)
+      - Don't include the current path "." inside $PATH. (Closes: #484773)
+      - Switch from xterm to x-terminal-emulator. (Closes: #499048)
+        Note: Now we recommend xterm at least.
+    - Add debian/patches/fix-manpage.patch, lintian spewed an error on slim.1.
+    - Update clean rule to remove the .pc directory.
+  * New theme:
+    - Add new theme debian-moreblue-orbit and set it as default. (Closes: #495029)
+  * Update translations:
+    - Portuguese. (Closes: #497587)
+    - Turkish. (Closes: #499557)
+
+ -- Mike Massonnet <mmassonnet@gmail.com>  Sun, 21 Sep 2008 16:15:15 +0200
+
+slim (1.3.0-1) unstable; urgency=low
+
+  [ Mike Massonnet <mmassonnet@gmail.com> ]
+  * Package new upstream version 1.3.0. (Closes: #447913)
+    - Build against libpam (add build dependency libpam0g-dev).
+    - DPatch cfg.cpp to include <stdlib.h> and fix FTBFS with GCC-4.3.
+      (Closes: #455138)
+    - Add /etc/X11/Xsession.d/20slim_locale to export the LANG.
+      (Closes: #440862)
+    - Replace xfce4-session with startxfce4 and add ion3. (Closes: #426466)
+    - Don't set the DPI. (Closes: #428407)
+  * The code concerning the environment init has drastically changed in this
+    new version, and Steve Kemp did a security audit over it. (Closes: #435841)
+  * Debconf translation:
+    - New Finnish translation. (Closes: #457447)
+    - Update Portuguese translation. (Closes: #445495)
+  * Minor changes:
+    - Suggest scrot as default screenshot utility.
+    - Refined the description.
+    - Set the Homepage field.
+    - Bump standards version to 3.7.3.
+    - Patch Makefile (LDFLAGS) to remove unnecessary links.
+
+  [ Christian Perrier <bubulle@debian.org> ]
+  * Debconf templates and debian/control reviewed by the debian-l10n-
+    english team as part of the Smith review project. (Closes: #426233, #423279)
+  * Debconf translation updates:
+    - German and all others taken from xdm. (Closes: #426532, #424677)
+    - Romanian. (Closes: #428955)
+    - Vietnamese. (Closes: #427145)
+
+ -- Mike Massonnet <mmassonnet@gmail.com>  Wed, 24 Oct 2007 22:44:07 +0200
+
+slim (1.2.6-1) unstable; urgency=low
+
+  * Initial release. (Closes: #337578)
+  * Add default Debian theme.
+  * Add openbox to the sessions.
+  * Patched app.cpp to avoid a segfault (Darren Salt).
+  * Patched Makefile to set MANDIR to /usr/share/man instead of /usr/man.
+  * Use the Xsession script as default login script. This changes the
+    behavior of slim where it now uses ~/.xsession instead of ~/.xinitrc.
+  * Adapted scripts from xdm to allow slim to be chosen as the default display
+    manager (Darren Salt).
+
+ -- Mike Massonnet <mmassonnet@gmail.com>  Thu,  5 Apr 2007 11:18:33 +0200
