@@ -1,3 +1,22 @@
+slim (1.3.6.1-1) unstable; urgency=high
+
+  * Changed default theme background to be a link to the galliumos default background
+
+ -- Hugh Greenberg <hugh@galliumos.org>  Fri, 02 Oct 2015 16:57:11 +0200
+
+slim (1.3.6-9) unstable; urgency=high
+
+  * Removed x11 priority patch as it isn't needed with rr_interval set to 1
+  * Modified config file patch to set stop session command
+
+ -- Hugh Greenberg <hugh@galliumos.org>  Fri, 02 Oct 2015 16:57:11 +0200
+
+slim (1.3.6-8) unstable; urgency=high
+
+  * Patch for disabling session change and screenshot
+
+ -- Hugh Greenberg <hugh@galliumos.org>  Fri, 02 Oct 2015 16:57:11 +0200
+
 slim (1.3.6-7) unstable; urgency=high
 
   * Patch for multiple monitor fixes

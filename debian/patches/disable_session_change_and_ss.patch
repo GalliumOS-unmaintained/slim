@@ -1,0 +1,18 @@
+--- a/panel.cpp
++++ b/panel.cpp
+@@ -559,15 +559,6 @@
+ 
+ 	XLookupString(&event.xkey, &ascii, 1, &keysym, &compstatus);
+ 	switch(keysym){
+-		case XK_F1:
+-			SwitchSession();
+-			return true;
+-
+-		case XK_F11:
+-			/* Take a screenshot */
+-			system(cfg->getOption("screenshot_cmd").c_str());
+-			return true;
+-
+ 		case XK_Return:
+ 		case XK_KP_Enter:
+ 			if (field==Get_Name){
