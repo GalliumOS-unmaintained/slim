@@ -54,3 +54,12 @@ Description: Debian changes for slim.conf
  
  # welcome message. Available variables: %host, %domain
  welcome_msg         Welcome to %host
+@@ -79,7 +81,7 @@
+ 
+ # current theme, use comma separated list to specify a set to 
+ # randomly choose from
+-current_theme       default
++current_theme       galliumos-default
+ 
+ # Lock file
+ lockfile            /var/run/slim.lock
