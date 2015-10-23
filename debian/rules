@@ -1,0 +1,42 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+DEB_HOST_ARCH_OS := $(shell dpkg-architecture -qDEB_HOST_ARCH_OS)
+
+CMAKE_FLAGS = -DUSE_PAM=yes -DUSE_CONSOLEKIT=no -DBUILD_SHARED_LIBS=no -DBUILD_SLIMLOCK=yes
+
+ifeq ($(DEB_HOST_ARCH_OS),kfreebsd)
+ CMAKE_FLAGS = -DUSE_PAM=yes -DUSE_CONSOLEKIT=no -DBUILD_SHARED_LIBS=no -DBUILD_SLIMLOCK=no
+endif
+
+ifeq ($(DEB_HOST_ARCH_OS),hurd)
+ CMAKE_FLAGS = -DUSE_PAM=yes -DUSE_CONSOLEKIT=no -DBUILD_SHARED_LIBS=no -DBUILD_SLIMLOCK=no
+endif
+
+%:
+	dh $@ --buildsystem=cmake --with systemd
+
+override_dh_auto_configure:
+	dh_auto_configure -- $(CMAKE_FLAGS)
+
+override_dh_installinit:
+	dh_installinit --noscripts
+#dh_installinit --no-restart-on-upgrade --no-start \
+#		--update-rcd-params="start 99 2 3 4 5 . stop 1 0 1 6 ."
+
+override_dh_installpam:
+	dh_installpam --name=slim
+
+override_dh_install:
+	dh_install --list-missing
+
+	# pam
+	#install -D -m 0644  pam.sample \
+		#$(CURDIR)/debian/slim/etc/pam.d/slim
+	# remove COPYRIGHT files.
+	rm -rf \
+		debian/slim/usr/share/slim/themes/debian-moreblue-orbit/COPYING \
+		debian/slim/usr/share/slim/themes/debian-moreblue/COPYING \
+		debian/slim/usr/share/slim/themes/debian-spacefun/COPYING \
+		debian/slim/usr/share/slim/themes/debian-joy/COPYING \
+		debian/slim/usr/share/slim/themes/debian-lines/COPYING

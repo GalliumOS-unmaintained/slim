@@ -1,0 +1,17 @@
+# debian-moreblue
+debian/debian-moreblue usr/share/slim/themes
+# debian-moreblue-orbit
+debian/debian-moreblue-orbit usr/share/slim/themes
+# debian-spacefun
+debian/debian-spacefun usr/share/slim/themes/
+# joy
+debian/debian-joy usr/share/slim/themes/
+# lines
+debian/debian-lines usr/share/slim/themes/
+# galliumos-default
+debian/galliumos-default usr/share/slim/themes/
+
+debian/local/Xsession.d/20slim_locale etc/X11/Xsession.d
+
+# pam
+#pam.sample etc/pam.d/slim

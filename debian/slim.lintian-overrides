@@ -1,0 +1,2 @@
+slim: spelling-error-in-binary usr/bin/slim accesss access
+slim: unused-debconf-template slim/daemon_name

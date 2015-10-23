@@ -1,0 +1,3 @@
+version=3
+opts=uversionmangle=s/(\d)[_\.\-\+]?((RC|rc|pre|dev|beta|alpha|b|a)[\-\.]?\d*)$/$1~$2/,dversionmangle=s/\+(debian|dfsg|ds|deb)\d*$// \
+http://sf.net/slim.berlios/slim-(\d\S*)\.(?:zip|tgz|tbz|txz|(?:tar\.(?:gz|bz2|xz)))

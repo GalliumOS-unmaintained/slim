@@ -1,3 +1,15 @@
+slim (1.3.7-1) unstable; urgency=high
+
+  * Improved XRandr support for GalliumOS
+
+ -- Hugh Greenberg <hugh@galliumos.org>  Thu, 22 Oct 2015 16:57:11 +0200
+
+slim (1.3.6.2-1) unstable; urgency=high
+
+  * Added galliumos theme
+
+ -- Hugh Greenberg <hugh@galliumos.org>  Sat, 17 Oct 2015 16:57:11 +0200
+
 slim (1.3.6.1-1) unstable; urgency=high
 
   * Changed default theme background to be a link to the galliumos default background

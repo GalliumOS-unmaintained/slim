@@ -1,0 +1,22 @@
+Source: slim
+Section: x11
+Priority: optional
+Maintainer: Nobuhiro Iwamatsu <iwamatsu@debian.org>
+Uploaders: Jens Peter Secher <jps@debian.org>, Mateusz Łukasik <mati75@linuxmint.pl>
+Build-Depends: debconf, debhelper (>= 9), libjpeg-dev, libpam0g-dev,
+	libpng-dev, libxft-dev, libxmu-dev, po-debconf, sharutils, cmake,
+	freeglut3-dev, libpthread-stubs0-dev, libxrandr-dev, dh-systemd
+Standards-Version: 3.9.6
+Homepage: http://sourceforge.net/projects/slim.berlios/
+
+Package: slim
+Architecture: any
+Provides: x-display-manager
+Recommends: xterm 
+Suggests: scrot, xauth
+Depends: ${shlibs:Depends}, ${misc:Depends}, debconf (>= 1.2.9) | debconf-2.0, dbus
+Description: desktop-independent graphical login manager for X11
+ SLiM aims to be light, simple and independent from the various
+ desktop environments. Although completely configurable through
+ themes and an option file. It is particularly suitable for machines 
+ that don't require remote logins.
