@@ -151,6 +151,7 @@ private:
 
 	/* screen stuff */
 	Rectangle viewport;
+	Rectangle display_size;
 	
 	/* Configuration */
 	int input_name_x;

@@ -33,7 +33,9 @@ Panel::Panel(Display* dpy, int scr, Window root, Cfg* config,
 		if (!CheckXRandr()) {
 			exit (ERR_EXIT);
 		}
-		
+
+		display_size.width = DisplayWidth(Dpy, Scr);
+		display_size.height = DisplayHeight(Dpy, Scr);
 		viewport = GetPrimaryViewport();
 	}
 
@@ -496,6 +498,8 @@ void Panel::EventHandler(const Panel::FieldType& curfield) {
 	bool loop = true;
 	int error;
 	int mon_changed = 0;
+	unsigned int display_width;
+	unsigned int display_height;
 	XRRScreenChangeNotifyEvent *xrevent;
 	Rectangle new_viewport;
 	
@@ -528,6 +532,13 @@ void Panel::EventHandler(const Panel::FieldType& curfield) {
 			    if (new_viewport.width != viewport.width ||
 				new_viewport.height != viewport.height) {
 			      mon_changed = 1;
+			    }
+
+			    display_width = DisplayWidth(Dpy, Scr);
+			    display_height = DisplayHeight(Dpy, Scr);
+			    if (display_width != display_size.width ||
+				display_height != display_size.height) {
+				    mon_changed = 1;
 			    }
 			    /* Xrandr.h 1.9, 2002/09/29*/
 			  }
