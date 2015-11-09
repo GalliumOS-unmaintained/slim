@@ -533,7 +533,7 @@ void Panel::EventHandler(const Panel::FieldType& curfield) {
 				new_viewport.height != viewport.height) {
 			      mon_changed = 1;
 			    }
-
+			    
 			    display_width = DisplayWidth(Dpy, Scr);
 			    display_height = DisplayHeight(Dpy, Scr);
 			    if (display_width != display_size.width ||
