@@ -524,7 +524,7 @@ void Panel::EventHandler(const Panel::FieldType& curfield) {
 			    break;
 			  }
 #ifdef RRScreenChangeNotifyMask
-			  if (event.type == randr_event + RRScreenChangeNotify) {
+			  if (mode == Mode_Lock && event.type == randr_event + RRScreenChangeNotify) {
 			    /* Inform Xlib that it's ok to update its data structures. */
 			    XRRUpdateConfiguration(&event);
 			    xrevent = (XRRScreenChangeNotifyEvent *) &event;
@@ -546,7 +546,7 @@ void Panel::EventHandler(const Panel::FieldType& curfield) {
 			  if (mode == Mode_Lock)
 			    XRaiseWindow(Dpy, Root);
 			}
-			if (mon_changed) {
+			if (mode == Mode_Lock && mon_changed) {
 			  loop = 0;
 			  monitors_changed = 1;
 			  break;
