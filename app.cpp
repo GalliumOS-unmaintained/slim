@@ -21,6 +21,7 @@
 #include <sstream>
 #include <vector>
 #include <algorithm>
+#include <sched.h>
 
 #include "app.h"
 #include "numlock.h"
@@ -31,6 +32,8 @@
 #endif
 
 using namespace std;
+
+#define SCHED_ISO	4
 
 #ifdef USE_PAM
 #include <string>
@@ -900,6 +903,8 @@ int App::StartServer() {
 	static char* server[MAX_XSERVER_ARGS+2] = { NULL };
 	server[0] = (char *)cfg->getOption("default_xserver").c_str();
 	string argOption = cfg->getOption("xserver_arguments");
+        struct sched_param param;
+
 	/* Add mandatory -xauth option */
 	argOption = argOption + " -auth " + cfg->getOption("authfile");
 	char* args = new char[argOption.length()+2]; /* NULL plus vt */
@@ -971,6 +976,9 @@ int App::StartServer() {
 			ServerPID = -1;
 			exit(ERR_EXIT);
 		}
+
+		param.sched_priority = 0;
+                sched_setscheduler(ServerPID, SCHED_ISO, &param);
 		break;
 	}
 
