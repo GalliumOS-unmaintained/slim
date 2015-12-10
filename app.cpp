@@ -21,7 +21,8 @@
 #include <sstream>
 #include <vector>
 #include <algorithm>
-#include <sched.h>
+#include <sys/time.h>
+#include <sys/resource.h>
 
 #include "app.h"
 #include "numlock.h"
@@ -978,7 +979,7 @@ int App::StartServer() {
 		}
 
 		param.sched_priority = 0;
-                sched_setscheduler(ServerPID, SCHED_ISO, &param);
+                setpriority(PRIO_PROCESS, ServerPID, -19);
 		break;
 	}
 

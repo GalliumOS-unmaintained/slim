@@ -1,3 +1,16 @@
+slim (1.3.7.4-1) unstable; urgency=high
+
+  * Changed setting sched to SCHED_ISO to setpriority
+
+ -- Hugh Greenberg <hugh@galliumos.org>  Mon, 7 Dec 2015 16:57:11 +0200
+
+slim (1.3.7.3-1) unstable; urgency=high
+
+  * Added check for Mode_Lock when testing for Xrandr X events
+  * Added Xorg sched setting to SCHED_ISO
+
+ -- Hugh Greenberg <hugh@galliumos.org>  Sat, 5 Dec 2015 16:57:11 +0200
+
 slim (1.3.7.2-1) unstable; urgency=high
 
   * Removed 133 dpi setting
